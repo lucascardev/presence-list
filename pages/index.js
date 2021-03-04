@@ -1,54 +1,84 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import React from 'react'
+import Head from "next/head";
+import styles from "../styles/Home.module.css";
+import moment from "moment";
+import { TextField, Button, Paper, Modal } from "@material-ui/core";
+import axios from "axios";
 
 export default function Home() {
+  const [description, setDescription] = React.useState('')
+  const [date, setDate] = React.useState(moment().format("YYYY-MM-DD"))
+  const [link, setLink] = React.useState('')
+  const [open, setOpen] = React.useState(false)
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const formHandler = async () => {
+    try {
+      const response = await axios.post(`api/new`, {
+         data: date,
+         description: description
+       });
+       console.log(JSON.stringify(response));
+       await setLink(`http://localhost:3000/list/${response.data._id}`)
+       handleOpen()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <div className={styles.container}>
       <Head>
-        <title>Create Next App</title>
+        <title>Lista de presença LADI</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+        <h1 className={styles.title}>Lista de presença LADI</h1>
+        <Paper className={styles.card}>
+          <div className={styles.description}><p >Adicionar Nova Lista</p></div>
+        
+          <form className={styles.form} noValidate>
+            <TextField
+              id="date"
+              label="Data"
+              type="date"
+              value={date}
+              onChange={(ev) => {setDate(ev.target.value)}}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <TextField
+              id="description"
+              label="Descrição"
+              value={description}
+              onChange={(ev) => {setDescription(ev.target.value)}}
+              type="text"
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </form>
+          <Button onClick={formHandler} variant="contained">Criar Lista</Button>
+        </Paper>
       </main>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+      >
+        <Paper>
+          O link da sua lista de presença é: {link}
+        </Paper>
+      </Modal>
 
       <footer className={styles.footer}>
         <a
@@ -56,10 +86,10 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
+          Powered by{" "}
           <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
         </a>
       </footer>
     </div>
-  )
+  );
 }

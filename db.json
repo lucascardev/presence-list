@@ -1,0 +1,33 @@
+{
+  "presence_lists": [
+    {
+      "date": "",
+      "description": "",
+      "people_count": 3,
+      "people_names": [
+        "Lucas Cardoso",
+        "Paula",
+        "Luma",
+        "Aline"
+      ]
+    }
+  ],
+  "theme": {
+    "colors": {
+      "primary": "#f582ae",
+      "secondary": "#b2ff59",
+      "mainBg": "#f3d2c1",
+      "contrastText": "#271c19",
+      "wrong": "#FF5722",
+      "success": "#4CAF50"
+    },
+    "borderRadius": "4px",
+    "padding": "4px"
+  },
+  "LADI_members": [
+    "Paula",
+    "Lucas Cardoso",
+    "Luma",
+    "Aline"  
+  ]
+}
