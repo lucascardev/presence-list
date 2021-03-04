@@ -1,8 +1,5 @@
 import mongoose from "mongoose";
 import moment from "moment";
-require('dotenv').config({  
-  path: process.env.NODE_ENV === "test" ? ".env.testing" : ".env"
-})
 import List from "../../src/Models/List"
 import connectDB from '../../src/middlewares/mongodb';
 

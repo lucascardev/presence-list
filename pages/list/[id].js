@@ -2,19 +2,19 @@ import React, { useState } from 'react'
 import styles from "../../styles/Home.module.css";
 import Head from "next/head";
 import { TextField, Button, Paper } from "@material-ui/core";
-import server from "../../src/config"
 import moment from "moment"
 import axios from "axios"
 import { useRouter } from 'next/router'
 
-const List = props => {
 
+const List = props => {
   const [name, setName] = useState('')
   const router = useRouter()
 
+
   const formHandler = async () => {
     try {
-      const response = await axios.post(`http://localhost:3000/api/assign`, {
+      const response = await axios.post(`${props.url_prefix}/api/assign`, {
          name: name,
          id: props.id
        });
@@ -37,7 +37,6 @@ const List = props => {
         <h1 className={styles.title}>{moment(props.date).format("DD/MM/YYYY")}</h1>
         <Paper className={styles.card}>
           <div className={styles.description}><p>{props.description}</p></div>
-        
           <form className={styles.form} noValidate>
             <TextField
               id="name"
@@ -58,10 +57,16 @@ const List = props => {
   }
 
   export const getServerSideProps = async (context) => {
+    let url_prefix;
+    if (process.env.NODE_ENV === 'development') {
+        url_prefix = "http://localhost:3000";
+    } else {
+        url_prefix = "http://localhost:3000";
+    }
     const id = context.params.id
-    const res = await fetch(`http://localhost:3000/api/${id}`)
+    const res = await fetch(`${url_prefix}/api/${id}`)
     const data = await res.json()
-    return {props: { ...data, id}}
+    return {props: { ...data, id, url_prefix}}
   }
   
   export default List
