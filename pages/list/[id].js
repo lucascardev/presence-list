@@ -61,7 +61,7 @@ const List = props => {
     if (process.env.NODE_ENV === 'development') {
         url_prefix = "http://localhost:3000";
     } else {
-        url_prefix = "http://localhost:3000";
+        url_prefix = "https://presence-list.vercel.app";
     }
     const id = context.params.id
     const res = await fetch(`${url_prefix}/api/${id}`)
