@@ -21,12 +21,18 @@ export default function Home() {
 
   const formHandler = async () => {
     try {
+      let url_prefix;
+      if (process.env.NODE_ENV === 'development') {
+          url_prefix = "http://localhost:3000";
+      } else {
+          url_prefix = "https://presence-list.vercel.app";
+      }
       const response = await axios.post(`api/new`, {
          data: date,
          description: description
        });
        console.log(JSON.stringify(response));
-       await setLink(`http://localhost:3000/list/${response.data._id}`)
+       await setLink(`${url_prefix}/list/${response.data._id}`)
        handleOpen()
     } catch (error) {
       console.log(error)
