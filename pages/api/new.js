@@ -6,13 +6,18 @@ import connectDB from '../../src/middlewares/mongodb';
 
 const handler = async (req, res) => {
   if (req.method === 'POST') {
-    const { description, data } = req.body;
-    if (description && data) {
+    const { description, start, end, entity, email, internal } = req.body;
+    if (description && start && end && entity && email) {
         try {
           // Hash password to store it in DB
+          console.log("start" + start)
           var list = new List({
             description,
-            date: data,
+            email,
+            start,
+            end,
+            entity,
+            internal
           });
           // Create new user
            const listcreated = await list.save();

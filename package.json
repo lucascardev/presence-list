@@ -15,10 +15,12 @@
     "dotenv": "^8.2.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
+    "moment-timezone": "^0.5.33",
     "mongoose": "^5.11.18",
     "next": "10.0.7",
     "react": "17.0.1",
-    "react-dom": "17.0.1"
+    "react-dom": "17.0.1",
+    "react-icons": "^4.2.0"
   },
   "devDependencies": {
     "prettier": "2.2.1"
