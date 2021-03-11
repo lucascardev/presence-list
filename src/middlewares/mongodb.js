@@ -8,7 +8,7 @@ const connectDB = handler => async (req, res) => {
         return handler(req, res);
       }
       // Use new db connection
-    await mongoose.connect(`mongodb+srv://ladi-listpresence:${process.env.DATABASE_PASSWORD}@basiccluster.phuqf.mongodb.net/${process.env.DATABASE_NAME}?retryWrites=true&w=majority`, {
+    await mongoose.connect(process.env.MONGODB_URI, {
         useUnifiedTopology: true,
         useFindAndModify: false,
         useCreateIndex: true,
