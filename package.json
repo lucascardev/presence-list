@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "commit-changes": "git checkout changes && git add . && git commit",
+    "merge-changes": "git checkout master && git merge changes && git push --force-with-lease"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.3",
