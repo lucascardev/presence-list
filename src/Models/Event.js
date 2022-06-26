@@ -4,6 +4,7 @@ const event = new mongoose.Schema({
   description: String,
   participants: [{type: mongoose.Schema.Types.ObjectID, ref: 'participant'}],
   subscripted: [{type: mongoose.Schema.Types.ObjectID, ref: 'participant'}],
+  certificates: [{type: mongoose.Schema.Types.ObjectID, ref: 'certificate'}],
   start: Date,
   end: Date,
   unique_id: String,

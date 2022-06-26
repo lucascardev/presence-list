@@ -1,18 +1,17 @@
 import mongoose from "mongoose";
 import moment from "moment";
-import connectDB from "../../src/middlewares/mongodb";
 import Event from "../../src/Models/Event";
-import Certificate from "../../src/Models/Certificate"
 import Participant from "../../src/Models/Participant"
+import Certificate from "../../src/Models/Certificate"
+import connectDB from "../../src/middlewares/mongodb";
 
 const handler = async (req, res) => {
   if (req.method === "GET") {
     const { unique_id } = req.query;
     if (unique_id) {
       try {
-        const event_edit = await Event.findOne({unique_id:  unique_id}).populate('participants')
-        event_edit.populate('certificates')
-        return res.status(200).send(event_edit);
+        const certificates_data = await Event.findOne({ unique_id: unique_id }).populate('certificates').populate('participants')
+        return res.status(200).send(certificates_data);
       } catch (error) {
         return res.status(500).send(error.message);
       }

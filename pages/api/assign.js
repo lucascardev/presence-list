@@ -11,9 +11,8 @@ const handler = async (req, res) => {
     if (name != '' && email != '' && id) {
       try {
         const new_participant = new Participant({ college, name, email })
-        const participant_saved = await new_participant.save().catch((err) => {
-         
-        });
+        const participant_saved = await new_participant.save()
+        
         if (participant_saved) {
           const event = await Event.findById(id)
           await event.participants.push(participant_saved)

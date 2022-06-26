@@ -26,7 +26,8 @@ mongoose.models = {};
 const Participant = mongoose.model("participant", participant, "participants");
 
 participant.path('email').validate(async (email) => {
-  const email_count = await mongoose.models.Participant.countDocuments({ email })
+  const email_count = await mongoose.models.participant.countDocuments({ email })
+  console.log(email_count)
   return !email_count
  }, 'Email já existe')
 

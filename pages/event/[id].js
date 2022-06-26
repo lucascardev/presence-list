@@ -6,15 +6,18 @@ import moment from "moment";
 import axios from "axios";
 import { useRouter } from "next/router";
 import tz from "moment-timezone"
+import _ from 'lodash'
 
 const Event = (props) => {
+
+  const router = useRouter();
   
   const [data, setData] = useState(moment(props.start).format("DD/MM/YYYY"));
   const [start, setStart] = React.useState(
-    moment(props.start).tz("America/Bahia").format("hh:mm")
+    moment(props.start).format("hh:mm")
   );
   const [end, setEnd] = React.useState(
-    moment(props.end).tz("America/Bahia").format("hh:mm")
+    moment(props.end).format("hh:mm")
   );
   const [entity, setEntity] = React.useState(props.entity)
   const [description, setDescription] = React.useState(props.description)
@@ -40,6 +43,7 @@ const Event = (props) => {
   const [error_entity, setErrorEntity] = useState("");
   const [error_google_meet_link, setErrorGoogleMeetLink] = useState("");
   const [error_zoom_link, setErrorZoomLink] = useState("");
+
   
 
   const formHandler = async () => {
@@ -71,6 +75,16 @@ const Event = (props) => {
       console.log(error);
     }
   };
+
+  const editCertificateHandler = async () => {
+    try {
+      let loaded
+      _.isEmpty(props.certificates) ? (loaded = false) : (loaded = true)
+      router.push(`${props.url_prefix}/event/certificate/edit?unique_id=${props.unique_id}&loaded=${loaded}`)
+    } catch (error) {
+      
+    }
+  }
 
   return (
     <div className={styles.container}>
@@ -226,6 +240,9 @@ const Event = (props) => {
               </ListItem>
             ))}
     </List>
+    <Button onClick={editCertificateHandler} variant="contained">
+            Certificado do evento
+          </Button>
         </Paper>
         </div>
       </main>

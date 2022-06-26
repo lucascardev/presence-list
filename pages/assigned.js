@@ -14,7 +14,7 @@ const Assigned = (props) => {
       <main className={styles.main}>
         <Paper className={styles.card}>
           <h1 className={styles.title}>
-            Obrigado, {props.name} a lista foi assinada com sucesso!
+            Obrigado, {props.name} a lista foi assinada com sucesso! Aproveite o evento.
           </h1>
         </Paper>
       </main>
