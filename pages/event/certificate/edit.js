@@ -135,7 +135,7 @@ const Certificate = (props) => {
             setCertificateText(ev.target.value)
           }} 
           aria-label="minimum height" 
-          rowsMin={3} 
+          minRows={3} 
           placeholder="Certificate Text" 
           value={certificate_text} />
           </div>

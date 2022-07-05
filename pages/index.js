@@ -14,25 +14,29 @@ import {
   Switch,
   FormControlLabel,
   FormGroup,
-} from "@material-ui/core";
+  Box,
+} from "@mui/material";
 import axios from "axios";
 import { FiCopy } from "react-icons/fi";
 import { useRouter } from "next/router";
+import { useSnackbar } from "notistack";
 
 export default function Home() {
-  const [event_id, setEventID] = React.useState("");
-  const [description, setDescription] = React.useState("");
+  const { enqueueSnackbar } = useSnackbar();
+  const [event_id, setEventID] = React.useState();
+  const [description, setDescription] = React.useState();
   const [date, setDate] = React.useState(moment().format("YYYY-MM-DD"));
-  const [start, setStart] = React.useState("");
-  const [end, setEnd] = React.useState("");
-  const [entity, setEntity] = React.useState("");
-  const [organizer_email, setOrganizerEmail] = React.useState("");
+  const [start, setStart] = React.useState();
+  const [end, setEnd] = React.useState();
+  const [entity, setEntity] = React.useState();
+  const [organizer_email, setOrganizerEmail] = React.useState();
   const [subscription, setSubscription] = React.useState(false);
-  const [link, setLink] = React.useState("");
+  const [link, setLink] = React.useState();
+  const [subscription_link, setSubscriptionLink] = React.useState();
   const [open, setOpen] = React.useState(false);
   const router = useRouter();
   const [empty_id, setEmptyID] = React.useState(false);
-  const [error_id, setErrorID] = React.useState("");
+  const [error_id, setErrorID] = React.useState();
   const [out_id, setOutID] = React.useState(false);
 
   const handleOpen = () => {
@@ -59,7 +63,23 @@ export default function Home() {
         `${date}/${end}`,
         "YYYY-MM-DD/hh:mm"
       ).format();
-      console.log(startDate);
+      // console.log(startDate);
+
+      if (
+        !start ||
+        !end ||
+        !organizer_email ||
+        !date ||
+        !description ||
+        !entity
+      ) {
+        enqueueSnackbar(
+          "🧐 Ops, algum(s) dos campos parecem vazios, peencha com todos os dados do evento",
+          { variant: "error" }
+        );
+        return true;
+      }
+
       const response = await axios.post(`api/new`, {
         start: startDate,
         end: endDate,
@@ -68,9 +88,12 @@ export default function Home() {
         subscription: subscription,
         description: description,
       });
-      console.log(JSON.stringify(response));
+      // console.log(JSON.stringify(response));
       setLink(`${url_prefix}/list/${response.data._id}`);
-      setEventID(response.data.unique_id)
+      setSubscriptionLink(
+        `${url_prefix}/subscription_list/${response.data._id}`
+      );
+      setEventID(response.data.unique_id);
       handleOpen();
     } catch (error) {
       console.log(error);
@@ -80,28 +103,32 @@ export default function Home() {
   const editEventHandler = async () => {
     try {
       let url_prefix;
-      if (event_id != "") {
-      if (process.env.NODE_ENV === "development") {
-        url_prefix = "http://localhost:3000";
+      if (event_id) {
+        if (process.env.NODE_ENV === "development") {
+          url_prefix = "http://localhost:3000";
+        } else {
+          url_prefix = "https://presence-list.vercel.app";
+        }
+        router.push(`${url_prefix}/event/${event_id}`);
       } else {
-        url_prefix = "https://presence-list.vercel.app";
+        setEmptyID(true);
+        setErrorID("Preencha com ID do evento");
+        enqueueSnackbar(
+          "🧐 Ops, o campo parece vazio, peencha com ID do evento",
+          { variant: "error" }
+        );
       }
-      router.push(`${url_prefix}/event/${event_id}`)
-    } else {
-      setEmptyID(true)
-      setErrorID("Preencha com ID do evento")
-    }
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
-  }
+  };
 
-  const handleClickCopy = () => {
-    navigator.clipboard.writeText(link)
+  const handleClickCopy = (text) => {
+    navigator.clipboard.writeText(text);
   };
 
   const handleChange = (event) => {
-      setSubscription(event.target.checked)
+    setSubscription(event.target.checked);
   };
 
   return (
@@ -113,141 +140,158 @@ export default function Home() {
       <main className={styles.main}>
         <h1 className={styles.title}>Lista de presença para eventos</h1>
         <div className={styles.content}>
-        <Paper className={styles.card}>
-          <div className={styles.description}>
-            <p>Formulário para criar novo evento</p>
-          </div>
-          <form className={styles.form} noValidate>
-            <div>
-              <TextField
-                id="description"
-                style={{ margin: 8 }}
-                label="Nome do evento"
-                value={description}
-                onChange={(ev) => {
-                  setDescription(ev.target.value);
-                }}
-                type="text"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-              <TextField
-                id="entity"
-                style={{ margin: 8 }}
-                label="Organização"
-                value={entity}
-                onChange={(ev) => {
-                  setEntity(ev.target.value);
-                }}
-                type="text"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-              <TextField
-                id="organizer_email"
-                style={{ margin: 8 }}
-                label="E-mail do organizador"
-                value={organizer_email}
-                onChange={(ev) => {
-                  setOrganizerEmail(ev.target.value);
-                }}
-                type="text"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
+          <Paper className={styles.card}>
+            <div className={styles.description}>
+              <p>Dados para criar novo evento</p>
             </div>
-            <div>
-              <TextField
-                id="date"
-                style={{ margin: 8 }}
-                label="Data"
-                type="date"
-                value={date}
-                onChange={(ev) => {
-                  setDate(ev.target.value);
-                }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-              <TextField
-                id="start"
-                style={{ margin: 8 }}
-                label="Início"
-                type="time"
-                value={start}
-                onChange={(ev) => {
-                  setStart(ev.target.value);
-                }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-              <TextField
-                id="end"
-                style={{ margin: 8 }}
-                label="Final"
-                type="time"
-                value={end}
-                onChange={(ev) => {
-                  setEnd(ev.target.value);
-                }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            </div>
-            <FormGroup row>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={subscription}
-                    onChange={handleChange}
-                    name="subscription"
-                  />
-                }
-                label="Ativar Inscrição"
-              />
-            </FormGroup>
-            
-          </form>
-          <Button onClick={formHandler} variant="contained">
-            Criar Evento
-          </Button>
-        </Paper>
-        <Paper className={styles.card}>
-        <div className={styles.description}>
-            <p>Acesse seu evento pelo ID
-            </p>
-          </div>
-          <form className={styles.form} noValidate>
-            <div>
-              <TextField
-                error={empty_id || out_id}
-                disabled={out_id}
-                helperText={error_id}
-                id="event_id"
-                style={{ margin: 8 }}
-                label="ID do seu Evento"
-                value={event_id}
-                onChange={(ev) => {
-                  setEventID(ev.target.value);
-                  setEmptyID(false);
-                }}
-                type="text"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
+            <Box
+              className={styles.form}
+              component="form"
+              noValidate
+              autoComplete="off"
+            >
+              <div>
+                <TextField
+                  id="description"
+                  style={{ margin: 8 }}
+                  label="Nome do evento"
+                  value={description}
+                  onChange={(ev) => {
+                    setDescription(ev.target.value);
+                  }}
+                  type="text"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                <TextField
+                  id="entity"
+                  style={{ margin: 8 }}
+                  label="Organização"
+                  required
+                  value={entity}
+                  onChange={(ev) => {
+                    setEntity(ev.target.value);
+                  }}
+                  type="text"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                <TextField
+                  id="organizer_email"
+                  required
+                  style={{ margin: 8 }}
+                  label="E-mail do organizador"
+                  value={organizer_email}
+                  onChange={(ev) => {
+                    setOrganizerEmail(ev.target.value);
+                  }}
+                  type="text"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
               </div>
-          </form>
-          <Button onClick={editEventHandler} variant="contained" disabled={out_id}>
-            Acompanhar meu evento
-          </Button>
-        </Paper>
+              <div>
+                <TextField
+                  id="date"
+                  required
+                  style={{ margin: 8 }}
+                  label="Data"
+                  type="date"
+                  value={date}
+                  onChange={(ev) => {
+                    setDate(ev.target.value);
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                <TextField
+                  id="start"
+                  required
+                  style={{ margin: 8 }}
+                  label="Início"
+                  type="time"
+                  value={start}
+                  onChange={(ev) => {
+                    setStart(ev.target.value);
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                <TextField
+                  id="end"
+                  required
+                  style={{ margin: 8 }}
+                  label="Final"
+                  type="time"
+                  value={end}
+                  onChange={(ev) => {
+                    setEnd(ev.target.value);
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </div>
+              <FormGroup row>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={subscription}
+                      onChange={handleChange}
+                      name="subscription"
+                    />
+                  }
+                  label="Ativar Inscrição"
+                />
+              </FormGroup>
+            </Box>
+            <Button onClick={formHandler} variant="contained">
+              😎 Criar o meu evento
+            </Button>
+          </Paper>
+          <Paper className={styles.card}>
+            <div className={styles.description}>
+              <p>Acesse seu evento pelo ID</p>
+            </div>
+            <Box
+              component="form"
+              className={styles.form}
+              noValidate
+              autoComplete="off"
+            >
+              <div>
+                <TextField
+                  error={empty_id || out_id}
+                  disabled={out_id}
+                  helperText={error_id}
+                  id="event_id"
+                  style={{ margin: 8 }}
+                  label="ID do seu Evento"
+                  value={event_id}
+                  onChange={(ev) => {
+                    setEventID(ev.target.value);
+                    setEmptyID(false);
+                  }}
+                  type="text"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </div>
+            </Box>
+            <Button
+              onClick={editEventHandler}
+              variant="contained"
+              disabled={out_id}
+            >
+              Acompanhar meu evento
+            </Button>
+          </Paper>
         </div>
       </main>
       <Modal
@@ -259,12 +303,16 @@ export default function Home() {
       >
         <Card className={styles.link_card}>
           <CardContent>
+            <Typography className={styles.description} color="textSecondary">
+              Os dados do seu evento foram enviados ao seu email.
+            </Typography>
             <Typography
-              className={styles.title}
+              className={styles.description}
               color="textSecondary"
               gutterBottom
             >
-              O link da nova lista de presença é:
+              O link da lista de presença que deve ser indicada aos
+              participantes enquanto o evento ocorrer é:
             </Typography>
             <TextField
               id="read-only-input"
@@ -277,13 +325,61 @@ export default function Home() {
                 readOnly: true,
                 endAdornment: (
                   <InputAdornment position="end">
-                    <Button onClick={handleClickCopy}>
+                    <Button onClick={() => handleClickCopy(link)}>
                       <FiCopy />
                     </Button>
                   </InputAdornment>
                 ),
               }}
             />
+            {subscription ? (
+              <>
+                <Typography
+                  className={styles.description}
+                  color="textSecondary"
+                  gutterBottom
+                >
+                  Este é seu link da lista de inscrição, deve ser enviada para
+                  os convidados do evento.
+                </Typography>
+                <TextField
+                  id="read-only-input"
+                  label="Link para inscrição"
+                  fullWidth
+                  defaultValue={subscription_link}
+                  size="large"
+                  helperText="Clique no botão ao lado para copiar"
+                  InputProps={{
+                    readOnly: true,
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <Button
+                          onClick={() => handleClickCopy(subscription_link)}
+                        >
+                          <FiCopy />
+                        </Button>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </>
+            ) : (
+              <Typography
+                className={styles.description}
+                color="textSecondary"
+                gutterBottom
+              >
+                A lista de inscrição está desativada para este evento.
+              </Typography>
+            )}
+            <Typography
+              className={styles.description}
+              color="textSecondary"
+              gutterBottom
+            >
+              O ID do seu evento é único e deve ser usado para acessar ou
+              modificar informações sobre seu evento.
+            </Typography>
             <TextField
               id="event_id"
               label="ID do evento"
@@ -310,8 +406,8 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-        Created by{" "}
-        <img src="/logomarca.png" alt="Vercel Logo" className={styles.logo} />
+          Created by{" "}
+          <img src="/logomarca.png" alt="Vercel Logo" className={styles.logo} />
         </a>
       </footer>
     </div>

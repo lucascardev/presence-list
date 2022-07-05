@@ -5,20 +5,20 @@ import { TextField, Button, Paper, Typography } from "@material-ui/core";
 import moment from "moment";
 import axios from "axios";
 import { useRouter } from "next/router";
-import tz from "moment-timezone"
+import tz from "moment-timezone";
 
 const List = (props) => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [college, setCollege] = useState("");
+  const [name, setName] = useState();
+  const [email, setEmail] = useState();
+  const [college, setCollege] = useState();
   const [data, setData] = useState(moment(props.start).format("DD/MM/YYYY"));
-  const [start, setStart] = React.useState(
+  const [start, setStart] = useState(
     moment(props.start).tz("America/Bahia").format()
   );
-  const [end, setEnd] = React.useState(
+  const [end, setEnd] = useState(
     moment(props.end).tz("America/Bahia").format()
   );
-  const [entity, setEntity] = React.useState(props.entity);
+  const [entity, setEntity] = useState(props.entity);
   const [empty, setEmpty] = useState(false);
   const [empty_name, setEmptyName] = useState(false);
   const [empty_email, setEmptyEmail] = useState(false);
@@ -27,10 +27,10 @@ const List = (props) => {
   const [out_name, setOutName] = useState(false);
   const [out_email, setOutEmail] = useState(false);
   const [out_college, setOutCollege] = useState(false);
-  const [error, setError] = useState("");
-  const [error_name, setErrorName] = useState("");
-  const [error_email, setErrorEmail] = useState("");
-  const [error_college, setErrorCollege] = useState("");
+  const [error, setError] = useState();
+  const [error_name, setErrorName] = useState();
+  const [error_email, setErrorEmail] = useState();
+  const [error_college, setErrorCollege] = useState();
   const router = useRouter();
 
   useEffect(() => {
@@ -49,7 +49,7 @@ const List = (props) => {
 
   const formHandler = async () => {
     try {
-      if (name != "" && email != "" && college != "") {
+      if (name && email && college ) {
         const response = await axios.post(`${props.url_prefix}/api/assign`, {
           name: name,
           email: email,
@@ -59,9 +59,9 @@ const List = (props) => {
         if (response.status == 200) {
           router.push(`/assigned?name=${name}`);
         } else if (response.status == 203) {
-          setError(response.data)
+          setError(response.data);
         }
-      } else if (name == ''){
+      } else if (!name) {
         setEmptyName(true);
         return false;
       }
@@ -75,8 +75,9 @@ const List = (props) => {
         <title>{props.description}</title>
         <link rel="icon" href="/favicon.ico" />
         {/* <meta name="description" content=""> */}
-        <meta name="keywords" content="odontology, odontologia, post" />
+        <meta name="keywords" content="event, presence, online" />
       </Head>
+
       <main className={styles.main}>
         <h1 className={styles.title}>{data}</h1>
         <Paper className={out ? styles.card_error : styles.card}>
@@ -85,41 +86,41 @@ const List = (props) => {
           </div>
           <form className={styles.form} noValidate>
             <div>
-            <TextField
-              error={empty_name || out_name}
-              style={{ margin: 8 }}
-              disabled={out_name}
-              helperText={error_name}
-              id="name"
-              label="Nome Completo"
-              type="text"
-              value={name}
-              onChange={(ev) => {
-                setName(ev.target.value);
-                setEmptyName(false);
-              }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-            
-            <TextField
-              error={empty_college || out_college}
-              disabled={out_college}
-              style={{ margin: 8 }}
-              helperText={error_college}
-              id="college"
-              label="Faculdade"
-              type="text"
-              value={college}
-              onChange={(ev) => {
-                setCollege(ev.target.value);
-                setEmptyCollege(false);
-              }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
+              <TextField
+                error={empty_name || out_name}
+                style={{ margin: 8 }}
+                disabled={out_name}
+                helperText={error_name}
+                id="name"
+                label="Nome Completo"
+                type="text"
+                value={name}
+                onChange={(ev) => {
+                  setName(ev.target.value);
+                  setEmptyName(false);
+                }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+
+              <TextField
+                error={empty_college || out_college}
+                disabled={out_college}
+                style={{ margin: 8 }}
+                helperText={error_college}
+                id="college"
+                label="Faculdade"
+                type="text"
+                value={college}
+                onChange={(ev) => {
+                  setCollege(ev.target.value);
+                  setEmptyCollege(false);
+                }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
             </div>
             <TextField
               error={empty_email || out_email}
@@ -141,9 +142,7 @@ const List = (props) => {
           <Button disabled={out} onClick={formHandler} variant="contained">
             Assinar Lista
           </Button>
-          <Typography className={styles.error}>
-            {error}
-          </Typography>
+          <Typography className={styles.error}>{error}</Typography>
         </Paper>
       </main>
     </div>

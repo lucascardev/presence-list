@@ -12,6 +12,7 @@ const handler = async (req, res) => {
       try {
         const event_edit = await Event.findOne({unique_id:  unique_id}).populate('participants')
         event_edit.populate('certificates')
+        event_edit.populate('subscripted')
         return res.status(200).send(event_edit);
       } catch (error) {
         return res.status(500).send(error.message);
