@@ -83,6 +83,7 @@ const Event = (props) => {
         });
         if (response.status == 200) {
           console.log("event changed");
+          
         }
       } else {
         setEmpty(true);

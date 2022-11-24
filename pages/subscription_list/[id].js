@@ -1,7 +1,11 @@
 import moment from "moment";
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
+import { TextField, Button, Paper, Typography } from "@mui/material";
+
 import tz from "moment-timezone";
+import { useRouter } from "next/router";
+import styles from "../../styles/Home.module.css";
 
 const Subscription_List = (props) => {
   const [name, setName] = useState();
@@ -74,6 +78,75 @@ const Subscription_List = (props) => {
         {/* <meta name="description" content=""> */}
         <meta name="keywords" content="event, presence, online" />
       </Head>
+      <main className={styles.main}>
+        <h1 className={styles.title}>{data}</h1>
+        <Paper className={out ? styles.card_error : styles.card}>
+          <div className={styles.description}>
+            <p>{props.description}</p>
+          </div>
+          <form className={styles.form} noValidate>
+            <div>
+              <TextField
+                error={empty_name || out_name}
+                style={{ margin: 8 }}
+                required
+                disabled={out_name}
+                helperText={error_name}
+                id="name"
+                label="Nome Completo"
+                type="text"
+                value={name}
+                onChange={(ev) => {
+                  setName(ev.target.value);
+                  setEmptyName(false);
+                }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+              <TextField
+                error={empty_email || out_email}
+                disabled={out_email}
+                helperText={error_email}
+                required
+                id="email"
+                label="Email"
+                type="text"
+                value={email}
+                onChange={(ev) => {
+                  setEmail(ev.target.value);
+                  setEmptyEmail(false);
+                }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+               </div>
+              <TextField
+                error={empty_college || out_college}
+                disabled={out_college}
+                style={{ margin: 8 }}
+                helperText={error_college}
+                id="college"
+                label="Faculdade"
+                type="text"
+                value={college}
+                onChange={(ev) => {
+                  setCollege(ev.target.value);
+                  setEmptyCollege(false);
+                }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+           
+          </form>
+          <Button disabled={out} onClick={formHandler} variant="contained">
+            Me inscrever para o evento
+          </Button>
+          <Typography className={styles.error}>{error}</Typography>
+        </Paper>
+      </main>
     </div>
   );
 };
